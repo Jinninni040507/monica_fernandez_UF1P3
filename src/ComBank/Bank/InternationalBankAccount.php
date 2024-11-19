@@ -7,12 +7,10 @@ class InternationalBankAccount extends BankAccount
 {
     use ApiTrait;
     public function getConvertedBalance():float{
-        
-        $convertedBalance = 0;
-        return $convertedBalance;
+        return $this->convertBalance($this->getBalance());
     }
     public function getConvertedCurrency():string{
-        return "hola";
+        return $this->getCurrency();
     }
 }
     

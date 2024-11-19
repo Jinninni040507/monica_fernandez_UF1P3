@@ -65,7 +65,7 @@
          */ 
         public function setEmail($email)
         {
-                $this->email = $email;
+                $this->email = $this->validateEmail($email);
 
                 return $this;
         }

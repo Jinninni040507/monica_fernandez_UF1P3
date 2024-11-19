@@ -8,6 +8,7 @@
  */
 
 use ComBank\Bank\Contracts\BackAccountInterface;
+use ComBank\Exceptions\FraudTransactionException;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 
 class DepositTransaction 
@@ -17,6 +18,11 @@ implements BankTransactionInterface
    
     function applyTransaction(BackAccountInterface $bankAccount):float{
         $newBalance = $bankAccount->getBalance() + $this->amount; 
+
+        if (!$this->detectFraud($this)) {
+            throw new FraudTransactionException;
+        }
+
         $bankAccount->setBalance($newBalance); 
 
         return $bankAccount->getBalance();

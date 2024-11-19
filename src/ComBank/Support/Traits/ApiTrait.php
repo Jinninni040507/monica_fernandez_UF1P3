@@ -1,6 +1,7 @@
 <?php namespace ComBank\Support\Traits;
 
 use ComBank\Transactions\Contracts\BankTransactionInterface;
+use ComBank\Transactions\DepositTransaction;
 
 trait ApiTrait {
     function validateEmail(string $email):bool{
@@ -30,6 +31,7 @@ trait ApiTrait {
         return $originalBalance*$conversionRate;
     }
     function detectFraud(BankTransactionInterface $transaction):bool{
+
         $ch = curl_init("https://673c935696b8dcd5f3fa9e88.mockapi.io/api/bank/fraud");
         curl_setopt_array($ch,[
             CURLOPT_RETURNTRANSFER => true
@@ -38,9 +40,21 @@ trait ApiTrait {
         curl_close($ch);
         $frauds = json_decode($resultJson,true);
 
-        
+        $arrayToCheck = 
+            array_filter(
+                $frauds,
+                fn($fraud)=> $fraud["movement"] === $transaction->getTRansactionInfo()
+            );
 
-        return true;
+        for ($i=count($arrayToCheck)-1 ; $i < count($arrayToCheck)-1 ; $i--) { 
+            $compareAmount = $arrayToCheck[$i]["amount"];
+
+            if ($compareAmount > $transaction -> getAmount()) {
+                $isFraud = $arrayToCheck[$i]["action"];
+            } 
+        }
+
+        return $isFraud;
     }
 }
     
