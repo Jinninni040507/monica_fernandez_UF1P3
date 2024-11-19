@@ -25,17 +25,20 @@ class BankAccount implements BackAccountInterface
     use AmountValidationTrait;
 
 // Class Attributes
-    private $balance;
-    private $status;
-    private $overdraft;
-
+    protected $personHolder;
+    protected $balance;
+    protected $status;
+    protected $overdraft;
+    protected $currency;
 
 // Constructor
-    public function __construct(float $newBalance = 0.0) {
+    public function __construct(float $newBalance = 0.0, $person = null, $currency = null ) {
+        $this->personHolder=$person;
         $this->validateAmount($newBalance);
         $this->setBalance($newBalance);
         $this->status = BackAccountInterface::STATUS_OPEN;
         $this->overdraft = new NoOverdraft();
+        $this->currency = $currency;
     }
 
 
@@ -92,7 +95,17 @@ class BankAccount implements BackAccountInterface
 
 
 // Getters & Setters
+
+    
     // Getters
+    /**
+     * Get the value of personHolder
+     */ 
+    public function getPersonHolder()
+    {
+        return $this->personHolder;
+    }
+
     /**
      * Get the value of balance
      */ 
@@ -107,6 +120,14 @@ class BankAccount implements BackAccountInterface
     public function getOverdraft():OverdraftInterface
     {
         return $this->overdraft;
+    }
+
+    /**
+     * Get the value of currency
+     */ 
+    public function getCurrency()
+    {
+        return $this->currency;
     }
 
     // Setters
@@ -141,4 +162,27 @@ class BankAccount implements BackAccountInterface
         $this->overdraft = $overdraft;
     }
 
+    /**
+     * Set the value of personHolder
+     *
+     * @return  self
+     */ 
+    public function setPersonHolder($personHolder)
+    {
+        $this->personHolder = $personHolder;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of currency
+     *
+     * @return  self
+     */ 
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
     }

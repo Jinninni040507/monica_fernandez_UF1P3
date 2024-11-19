@@ -10,8 +10,6 @@
 use ComBank\Exceptions\InvalidArgsException;
 use ComBank\Exceptions\ZeroAmountException;
 
-use function PHPSTORM_META\type;
-
 trait AmountValidationTrait
 {
     /**
