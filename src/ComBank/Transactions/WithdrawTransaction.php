@@ -11,6 +11,7 @@ use ComBank\Bank\Contracts\BackAccountInterface;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 use ComBank\Exceptions\FailedTransactionException;
+use ComBank\Exceptions\FraudTransactionException;
 
 class WithdrawTransaction 
 extends BaseTransaction
@@ -20,6 +21,9 @@ implements BankTransactionInterface
     {
         $newBalance = $bankAccount->getBalance() - $this->amount;
 
+        if (!$this->detectFraud($this)) {
+            throw new FraudTransactionException;
+        }
         
         if (!$bankAccount->getOverdraft()->isGrantOverdraftFunds($newBalance)) {
             if ($bankAccount->getOverdraft()->getOverdraftFundsAmount()==0) {
