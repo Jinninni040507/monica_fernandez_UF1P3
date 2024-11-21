@@ -11,7 +11,7 @@ trait ApiTrait {
         curl_setopt_array($ch,[
             CURLOPT_RETURNTRANSFER => true
         ]);
-        $resultJson = json_decode(curl_exec($ch));
+        $resultJson = json_decode(curl_exec($ch),true);
 
         $isValidFormat = $resultJson["is_valid_format"]["value"];
         $isDisposableEmail = $resultJson["is_disposable_email"]["value"];
@@ -47,22 +47,20 @@ trait ApiTrait {
                 fn($fraud)=> $fraud["movement"] === $transaction->getTRansactionInfo()
             );
 
-        for ($i=count($arrayToCheck)-1 ; $i > 0 ; $i--) { 
+        usort($arrayToCheck, fn($current, $next)=> $next["id"] <=> $current["id"]);
+
+        for ($i=0 ; $i < count($arrayToCheck); $i++) { 
             $compareAmount = $arrayToCheck[$i]["amount"];
 
-            if ($transaction->getAmount() < 1000 && $transaction->getTRansactionInfo() === "WITHDRAW_TRANSACTION") {
-                return true;
-            }
-            
-            if ($transaction->getAmount() < 5000 && $transaction->getTRansactionInfo() === "DEPOSIT_TRANSACTION") {
-                return true;
-            }
-
-            if ($compareAmount < $transaction->getAmount()) {
+            if ($compareAmount <= $transaction->getAmount()) {
                 return $arrayToCheck[$i]["action"];
             } 
-        }
 
+            if ($transaction->getAmount() >= 0) {
+                return true;
+            }
+        }
+        
         return false;
     }
     function loanAvailable(BankAccount $bankAccount, $loanAmount, $installments):bool{

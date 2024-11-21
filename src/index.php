@@ -9,7 +9,8 @@
 
 use ComBank\Bank\BankAccount;
 use ComBank\Bank\InternationalBankAccount;
-use ComBank\Bank\Person;
+use ComBank\Bank\NationalBankAccount;
+use ComBank\person\Person;
 use ComBank\OverdraftStrategy\SilverOverdraft;
 use ComBank\Transactions\DepositTransaction;
 use ComBank\Transactions\WithdrawTransaction;
@@ -17,6 +18,8 @@ use ComBank\Exceptions\BankAccountException;
 use ComBank\Exceptions\FailedTransactionException;
 use ComBank\Exceptions\ZeroAmountException;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
+use ComBank\Exceptions\InvalidEmailException;
+use ComBank\Exceptions\FraudTransactionException;
 
 require_once 'bootstrap.php';
 
@@ -136,8 +139,62 @@ try {
 //---INTERNATIONAL || NATIONAL ACCOUNTS---/
 pl('--------- [Start testing INTERNATIONAL bank account #3] --------');
 
-// Crear cuenta 1
 
+// 1. Verify national bank account returns currency in €
 $persona1 = new Person("Miquel", 1, "mafcorrales1970@gmail.com");
+$banckAccount3 = new NationalBankAccount(1000, 0,$persona1);
+pl("Creating National Bank Account");
+pl("Currency: ".$banckAccount3->getCurrency());
+pl("Balance: ".$banckAccount3->getBalance().$banckAccount3->getCurrency());
 
-$banckAccount3 = new InternationalBankAccount(1000, $persona1, "$");
+
+// 2. Verify international bank account returns currency in € with no converted balance
+$banckAccount4 = new InternationalBankAccount(1000, 0,$persona1);
+pl("Creating National Bank Account");
+pl("Currency: ".$banckAccount4->getCurrency());
+pl("Balance: ".$banckAccount4->getBalance().$banckAccount3->getCurrency());
+
+// 3. Verify international bank account returns currency in $ with balance converted
+pl("Converted Balance: ".$banckAccount4->getConvertedBalance().$banckAccount4->getConvertedCurrency());
+
+// 4. Verify a valid email for an account holder
+pl("Creating person with email mafcorrales1970@gmail.com");
+$persona2 = new Person("Miquel", 1, "mafcorrales1970@gmail.com");
+pl($persona2->getEmail());
+
+// 5. Verify an invalid email for an account holder
+try {
+    pl("Creating person with email mafcorrales1970@gmail.com");
+    $persona2 = new Person("Miquel", 1, "mafcorrales1970@@gmail.com");
+} catch (InvalidEmailException $th) {
+    pl("Invalid Email");
+}
+
+// 6. Verify deposit allowed by fraud functionality
+pl('Doing transaction deposit (+150) with current balance ' . $bankAccount3->getBalance());
+$bankAccount3->transaction(new DepositTransaction(150.0));
+    
+// 7. Verify deposit blocked by fraud functionality
+
+try {
+    pl('Doing transaction deposit (+50000) with current balance ' . $bankAccount3->getBalance());
+    $bankAccount3->transaction(new DepositTransaction(50000));
+} catch (FraudTransactionException $th) {
+    pl("Fraud detected");
+}
+
+// 8. Verify withdraw allowed by fraud functionality
+pl('Doing transaction deposit (+150) with current balance ' . $bankAccount3->getBalance());
+$bankAccount3->transaction(new WithdrawTransaction(50));
+// 9. Verify withdraw blocked by fraud functionality
+try {
+    pl('Doing transaction deposit (+50000) with current balance ' . $bankAccount3->getBalance());
+    $bankAccount3->transaction(new WithdrawTransaction(50000));
+} catch (FraudTransactionException $th) {
+    pl("Fraud detected");
+}
+
+// 10. Verify new free functionality
+
+
+

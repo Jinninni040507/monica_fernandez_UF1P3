@@ -1,6 +1,7 @@
-<?php namespace ComBank\Bank;
+<?php namespace ComBank\person;
     
     use ComBank\Support\Traits\ApiTrait;
+    use ComBank\Exceptions\InvalidEmailException;
     
     class Person{
         use ApiTrait;
@@ -13,6 +14,9 @@
     public function __construct(string $newName, string $newIdCard, string $newEmail){
         $this->name = $newName;
         $this->idCard = $newIdCard;
+        if ($this->validateEmail($newEmail)) {
+            throw new InvalidEmailException;
+        }
         $this->email = $this->validateEmail($newEmail);
     }
 

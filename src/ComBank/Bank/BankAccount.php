@@ -33,14 +33,14 @@ class BankAccount implements BackAccountInterface
     protected $currency;
 
 // Constructor
-    public function __construct(float $newBalance = 0.0, float $salary = 0, $person = null, $currency = null ) {
+    public function __construct(float $newBalance = 0.0, float $salary = 0, $person = null) {
         $this->personHolder = $person;
         $this->salary = $salary;
         $this->validateAmount($newBalance);
         $this->setBalance($newBalance);
         $this->status = BackAccountInterface::STATUS_OPEN;
         $this->overdraft = new NoOverdraft();
-        $this->currency = $currency;
+        $this->currency = "€";
     }
 
 
