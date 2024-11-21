@@ -8,6 +8,8 @@
  */
 
 use ComBank\Bank\BankAccount;
+use ComBank\Bank\InternationalBankAccount;
+use ComBank\Bank\Person;
 use ComBank\OverdraftStrategy\SilverOverdraft;
 use ComBank\Transactions\DepositTransaction;
 use ComBank\Transactions\WithdrawTransaction;
@@ -129,3 +131,13 @@ try {
 } catch (BankAccountException $e) {
     pl($e->getMessage());
 }
+
+
+//---INTERNATIONAL || NATIONAL ACCOUNTS---/
+pl('--------- [Start testing INTERNATIONAL bank account #3] --------');
+
+// Crear cuenta 1
+
+$persona1 = new Person("Miquel", 1, "mafcorrales1970@gmail.com");
+
+$banckAccount3 = new InternationalBankAccount(1000, $persona1, "$");

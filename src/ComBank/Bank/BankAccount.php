@@ -26,14 +26,16 @@ class BankAccount implements BackAccountInterface
 
 // Class Attributes
     protected $personHolder;
+    protected $salary;
     protected $balance;
     protected $status;
     protected $overdraft;
     protected $currency;
 
 // Constructor
-    public function __construct(float $newBalance = 0.0, $person = null, $currency = null ) {
-        $this->personHolder=$person;
+    public function __construct(float $newBalance = 0.0, float $salary = 0, $person = null, $currency = null ) {
+        $this->personHolder = $person;
+        $this->salary = $salary;
         $this->validateAmount($newBalance);
         $this->setBalance($newBalance);
         $this->status = BackAccountInterface::STATUS_OPEN;
@@ -130,6 +132,15 @@ class BankAccount implements BackAccountInterface
         return $this->currency;
     }
 
+    /**
+     * Get the value of salary
+     */ 
+    public function getSalary()
+    {
+        return $this->salary;
+    }
+
+
     // Setters
 
     /**
@@ -182,6 +193,18 @@ class BankAccount implements BackAccountInterface
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of salary
+     *
+     * @return  self
+     */ 
+    public function setSalary($salary)
+    {
+        $this->salary = $salary;
 
         return $this;
     }
